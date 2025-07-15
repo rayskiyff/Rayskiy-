@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rayskiy: Последний остров</title>
   <style>
     body {
@@ -19,21 +19,59 @@
 
     canvas {
       border: 3px solid white;
-      margin: 20px auto;
+      margin-top: 20px;
       background-color: #003366;
-      display: block;
     }
 
-    p {
-      margin-top: 10px;
+    .controls {
+      margin-top: 20px;
+    }
+
+    .btn {
+      background: white;
+      color: #001f3f;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-weight: bold;
       font-size: 16px;
+    }
+
+    .arrow-grid {
+      display: grid;
+      grid-template-columns: 60px 60px 60px;
+      grid-template-rows: 60px 60px;
+      justify-content: center;
+      margin-top: 10px;
+      gap: 5px;
+    }
+
+    .arrow-grid button {
+      width: 60px;
+      height: 60px;
+    }
+
+    .invisible {
+      visibility: hidden;
     }
   </style>
 </head>
 <body>
   <h1>Rayskiy: Последний остров</h1>
   <canvas id="game" width="300" height="300"></canvas>
-  <p>Используй стрелки на клавиатуре для движения</p>
+  <p>Используй стрелки или кнопки ниже для движения</p>
+
+  <div class="controls">
+    <div class="arrow-grid">
+      <div></div>
+      <button class="btn" onclick="move('up')">⬆</button>
+      <div></div>
+      <button class="btn" onclick="move('left')">⬅</button>
+      <button class="btn" onclick="move('down')">⬇</button>
+      <button class="btn" onclick="move('right')">➡</button>
+    </div>
+  </div>
 
   <script>
     const canvas = document.getElementById("game");
@@ -43,49 +81,39 @@
       x: 140,
       y: 140,
       size: 20,
-      color: "#00ffcc",
-      speed: 10
+      color: "#00ffcc"
     };
 
     function drawPlayer() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = player.color;
       ctx.beginPath();
       ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    function clearCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function gameLoop() {
-      clearCanvas();
+    function movePlayer(dx, dy) {
+      player.x += dx;
+      player.y += dy;
       drawPlayer();
-      requestAnimationFrame(gameLoop);
     }
 
-    document.addEventListener("keydown", function(event) {
-      switch (event.key) {
-        case "ArrowUp":
-          if (player.y - player.size - player.speed >= 0)
-            player.y -= player.speed;
-          break;
-        case "ArrowDown":
-          if (player.y + player.size + player.speed <= canvas.height)
-            player.y += player.speed;
-          break;
-        case "ArrowLeft":
-          if (player.x - player.size - player.speed >= 0)
-            player.x -= player.speed;
-          break;
-        case "ArrowRight":
-          if (player.x + player.size + player.speed <= canvas.width)
-            player.x += player.speed;
-          break;
-      }
+    function move(direction) {
+      const step = 10;
+      if (direction === "up") movePlayer(0, -step);
+      else if (direction === "down") movePlayer(0, step);
+      else if (direction === "left") movePlayer(-step, 0);
+      else if (direction === "right") movePlayer(step, 0);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp") move("up");
+      if (e.key === "ArrowDown") move("down");
+      if (e.key === "ArrowLeft") move("left");
+      if (e.key === "ArrowRight") move("right");
     });
 
-    gameLoop();
+    drawPlayer();
   </script>
 </body>
 </html>
